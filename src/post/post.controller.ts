@@ -15,27 +15,36 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get('/posts')
-  getPosts() {
-    return this.postService.getPosts();
+  async getPosts() {
+    return await this.postService.getPosts();
   }
 
   @Get('/posts/:id')
-  getDetailPost(@Param('id') postId: number) {
-    return this.postService.getDetailPost(postId);
+  async getDetailPost(@Param('id') postId: number) {
+    return await this.postService.getDetailPost(postId);
   }
 
-  @Post('/articles')
-  createPost(@Body() data: CreatePostDto): any {
-    return this.postService.createPost(data.title, data.content);
+  @Post('/post')
+  async createPost(@Body() data: CreatePostDto) {
+    await this.postService.createPost(data.title, data.content);
+    return {
+      message: 'create successfully',
+    };
   }
 
-  @Put('/articles/:id')
-  updatePost(@Param('id') postId: number, @Body() data: UpdatePostDto) {
-    return this.postService.updatePost(postId, data.title, data.content);
+  @Put('/posts/:id')
+  async updatePost(@Param('id') postId: number, @Body() data: UpdatePostDto) {
+    await this.postService.updatePost(postId, data.title, data.content);
+    return {
+      message: 'update successfully',
+    };
   }
 
-  @Delete('/articles/:id')
-  deletePost(@Param('id') postId: number) {
-    return this.postService.deletePost(postId);
+  @Delete('/posts/:id')
+  async deletePost(@Param('id') postId: number) {
+    await this.postService.deletePost(postId);
+    return {
+      message: 'delete successfully',
+    };
   }
 }

@@ -14,7 +14,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: this.configService.get<string>('DATABASE_USERNAME'),
       password: this.configService.get<string>('DATABASE_PASSWORD'),
       database: this.configService.get<string>('DATABASE_NAME'), // 중요: board 데이터베이스는 미리 생성해놓아야 합니다!
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [__dirname + '../../**/*.entity{.ts,.js}'],
       synchronize: this.configService.get<boolean>('DATABASE_SYNCHRONIZE'), // Production 환경에서는 false로 설정해야 합니다.
     };
   }
