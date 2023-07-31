@@ -47,6 +47,17 @@ export class UserService {
     return accessToken;
   }
 
+  async updateUser(userId: string, password: number) {
+    await this.isEmpty(userId, password);
+
+    await this.userRepository.update(
+      { userId },
+      {
+        password,
+      },
+    );
+  }
+
   async isAuth(userId: string) {
     if (!userId) {
       throw new NotFoundException(`Cannot found userId.`);
