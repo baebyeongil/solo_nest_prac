@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -15,11 +16,36 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
+  // user 전체 조회
+  async findAllUser() {
+    return await this.userRepository.find();
+  }
+
+  // user 상세 조회
+  async findOneUser(id: number, selecId: number) {
+    await this.isAuth(id, selecId);
+
+    return await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
+  // 로그인
   async login(userId: string, password: number) {
-    await this.isEmpty(userId, password);
+    if (!userId) {
+      throw new NotFoundException(`Cannot found userId.`);
+    }
 
-    const user = await this.isAuth(userId);
+    const user = await this.userRepository.findOne({
+      where: { userId },
+      select: ['id', 'password'],
+    });
 
+    if (!user) {
+      throw new NotFoundException(`Cannot found user.`);
+    }
     if (user.password !== password) {
       throw new UnauthorizedException(`User password is not correct.`);
     }
@@ -29,12 +55,13 @@ export class UserService {
     return accessToken;
   }
 
+  // 회원가입
   async signup(userId: string, name: string, password: number) {
-    if (!name) {
-      throw new NotFoundException(`Cannot found name.`);
+    if (!userId) {
+      throw new NotFoundException(`Cannot found userId.`);
     }
 
-    await this.isEmpty(userId, password);
+    await this.isEmpty(name, password);
 
     const insertResult = await this.userRepository.insert({
       userId,
@@ -47,41 +74,55 @@ export class UserService {
     return accessToken;
   }
 
-  async updateUser(userId: string, password: number) {
-    await this.isEmpty(userId, password);
+  // 유저 정보 수정
+  async updateUser(
+    id: number,
+    selecId: number,
+    name: string,
+    password: number,
+  ) {
+    await this.isEmpty(name, password);
+
+    await this.isAuth(id, selecId);
 
     await this.userRepository.update(
-      { userId },
+      { id },
       {
         password,
       },
     );
   }
 
-  async isAuth(userId: string) {
-    if (!userId) {
-      throw new NotFoundException(`Cannot found userId.`);
-    }
+  async deleteUser(id: number, selecId: number) {
+    await this.isAuth(id, selecId);
 
-    const user = await this.userRepository.findOne({
-      where: { userId },
-      select: ['password'],
-    });
-
-    if (!user) {
-      throw new NotFoundException(`Cannot found user.`);
-    }
-
-    return user;
+    await this.userRepository.delete({ id });
   }
 
-  async isEmpty(userId: string, password: number) {
-    if (!userId) {
-      throw new NotFoundException(`Cannot found userId.`);
+  // 미입력 여부 확인
+  async isEmpty(name: string, password: number) {
+    if (!name) {
+      throw new NotFoundException(`Cannot found name.`);
     }
 
     if (!password) {
       throw new NotFoundException(`Cannot found password.`);
+    }
+  }
+
+  // 권한 확인
+  async isAuth(id: number, selecId: number) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: selecId,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException(`Cannot found user.`);
+    }
+
+    if (user.id !== id) {
+      throw new ForbiddenException('Cannot access');
     }
   }
 }
