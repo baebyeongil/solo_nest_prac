@@ -1,8 +1,11 @@
+import { Post } from 'src/post/post.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   Index,
+  JoinTable,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,7 +17,7 @@ export class User {
 
   @Index({ unique: true })
   @Column()
-  userId: string;
+  loginId: string;
 
   @Column()
   name: string;
@@ -27,4 +30,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date | null;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
 }

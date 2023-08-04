@@ -1,7 +1,10 @@
+import { User } from 'src/user/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,4 +25,8 @@ export class Post {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  @JoinColumn({ name: 'userId' })
+  user: number;
 }

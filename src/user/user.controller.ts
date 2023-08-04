@@ -43,7 +43,7 @@ export class UserController {
     @Body() data: loginUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = await this.userService.login(data.userId, data.password);
+    const token = await this.userService.login(data.loginId, data.password);
     res.cookie('Authentication', 'Bearer ' + token);
     return {
       message: 'login successfully ' + token,
@@ -56,7 +56,7 @@ export class UserController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const token = await this.userService.signup(
-      data.userId,
+      data.loginId,
       data.name,
       data.password,
     );

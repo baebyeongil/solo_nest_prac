@@ -33,13 +33,13 @@ export class UserService {
   }
 
   // 로그인
-  async login(userId: string, password: number) {
-    if (!userId) {
+  async login(loginId: string, password: number) {
+    if (!loginId) {
       throw new NotFoundException(`Cannot found userId.`);
     }
 
     const user = await this.userRepository.findOne({
-      where: { userId },
+      where: { loginId },
       select: ['id', 'password'],
     });
 
@@ -56,15 +56,15 @@ export class UserService {
   }
 
   // 회원가입
-  async signup(userId: string, name: string, password: number) {
-    if (!userId) {
+  async signup(loginId: string, name: string, password: number) {
+    if (!loginId) {
       throw new NotFoundException(`Cannot found userId.`);
     }
 
     await this.isEmpty(name, password);
 
     const insertResult = await this.userRepository.insert({
-      userId,
+      loginId,
       name,
       password,
     });
