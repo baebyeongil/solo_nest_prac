@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
 import { Repository } from 'typeorm';
@@ -21,25 +25,26 @@ export class PostService {
     });
   }
 
-  async createPost(title: string, content: string) {
+  async createPost(userId: number, title: string, content: string) {
     await this.checkEmpty(title, content);
 
     await this.postRepository.insert({
+      user: userId,
       title,
       content,
     });
   }
 
-  async updatePost(id: number, title: string, content: string) {
+  async updatePost(userId: number, id: number, title: string, content: string) {
     await this.checkEmpty(title, content);
 
-    await this.checkPost(id);
+    await this.isAuth(userId, id);
 
     return await this.postRepository.update(id, { title, content });
   }
 
-  async deletePost(id: number) {
-    await this.checkPost(id);
+  async deletePost(userId: number, id: number) {
+    await this.isAuth(userId, id);
 
     return await this.postRepository.delete(id);
   }
@@ -64,6 +69,15 @@ export class PostService {
     });
     if (!post) {
       throw new NotFoundException(`Cannot found post.`);
+    }
+
+    return post;
+  }
+
+  private async isAuth(userId: number, id: number) {
+    const post = await this.checkPost(id);
+    if (post.user !== userId) {
+      throw new ForbiddenException('Cannot access');
     }
   }
 }

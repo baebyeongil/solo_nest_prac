@@ -6,10 +6,18 @@ import {
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+interface RequestWithLocals extends Request {
+  locals: {
+    user: number;
+  };
+}
+
 @Controller('api')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -25,24 +33,31 @@ export class PostController {
   }
 
   @Post('/post')
-  async createPost(@Body() data: CreatePostDto) {
-    await this.postService.createPost(data.title, data.content);
+  async createPost(@Body() data: CreatePostDto, @Req() req: RequestWithLocals) {
+    const userId = req.locals.user;
+    await this.postService.createPost(userId, data.title, data.content);
     return {
       message: 'create successfully',
     };
   }
 
   @Put('/posts/:id')
-  async updatePost(@Param('id') postId: number, @Body() data: UpdatePostDto) {
-    await this.postService.updatePost(postId, data.title, data.content);
+  async updatePost(
+    @Param('id') id: number,
+    @Body() data: UpdatePostDto,
+    @Req() req: RequestWithLocals,
+  ) {
+    const userId = req.locals.user;
+    await this.postService.updatePost(userId, id, data.title, data.content);
     return {
       message: 'update successfully',
     };
   }
 
   @Delete('/posts/:id')
-  async deletePost(@Param('id') postId: number) {
-    await this.postService.deletePost(postId);
+  async deletePost(@Param('id') postId: number, @Req() req: RequestWithLocals) {
+    const userId = req.locals.user;
+    await this.postService.deletePost(userId, postId);
     return {
       message: 'delete successfully',
     };
