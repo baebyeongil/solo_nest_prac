@@ -1,4 +1,4 @@
-const socket = new WebSocket();
+const socket = new WebSocket('ws://localhost:3000');
 socket.onopen = function () {
   console.log('Connected');
   socket.send(
