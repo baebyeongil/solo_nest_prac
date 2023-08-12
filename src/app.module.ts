@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtConfigService } from './config/jwt.config.service';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { EventsGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { AuthMiddleware } from './auth/auth.middleware';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthMiddleware],
+  providers: [AppService, AuthMiddleware, EventsGateway],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
