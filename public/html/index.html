@@ -3,10 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+      defer
+    ></script>
+    <title>chatRoom</title>
   </head>
   <body>
-    <header>chat</header>
-    <script src="/Javascript/chat.js" defer></script>
+    <div class="chat-container">
+      <div class="chat-messages">
+        <div class="message">
+          <div class="message-sender">system</div>
+          <div class="message-text">채팅이 시작됩니다.</div>
+        </div>
+      </div>
+      <div id="chatList">채팅 내용</div>
+      <div class="chat-input">
+          <input type="text" id="messageInput" placeholder="메시지를 입력하세요..."/>
+          <button onclick="sendMessage()">전송</button>
+        </form>
+      </div>
+    </div>
   </body>
 </html>
