@@ -7,7 +7,8 @@ socket.onopen = function () {
       data: 'test',
     }),
   );
-  socket.onmessage = function (data) {
-    console.log(data);
+  socket.onmessage = function (event) {
+    const data = JSON.parse(event.data); // JSON 문자열을 JavaScript 객체로 변환
+    console.log(data); // 실제 데이터 출력
   };
 };

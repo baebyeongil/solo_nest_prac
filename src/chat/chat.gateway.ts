@@ -4,8 +4,6 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Server } from 'ws';
 
 @WebSocketGateway()
@@ -14,7 +12,8 @@ export class EventsGateway {
   server: Server;
 
   @SubscribeMessage('events')
-  onEvent(client: any, data: any): Observable<WsResponse<number>> {
-    return from([1]).pipe(map((item) => ({ event: 'events', data: item })));
+  onEvent(client: any, data: any): WsResponse<any> {
+    // 클라이언트가 보낸 데이터를 그대로 다시 클라이언트로 보내기
+    return data;
   }
 }
