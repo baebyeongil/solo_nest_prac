@@ -16,7 +16,9 @@ import { loginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 interface RequestWithLocals extends Request {
   locals: {
-    user: number;
+    user: {
+      id: number;
+    };
   };
 }
 
@@ -34,7 +36,7 @@ export class UserController {
     @Param('id') selecId: number,
     @Req() req: RequestWithLocals,
   ) {
-    const id = req.locals.user;
+    const id = req.locals.user.id;
     return await this.userService.findOneUser(id, selecId);
   }
 
@@ -72,7 +74,7 @@ export class UserController {
     @Body() data: UpdateUserDto,
     @Req() req: RequestWithLocals,
   ) {
-    const id = req.locals.user;
+    const id = req.locals.user.id;
     await this.userService.updateUser(id, selecId, data.name, data.password);
     return {
       message: 'update successfully',
@@ -82,7 +84,6 @@ export class UserController {
   @Post('/logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('Authentication');
-    console.log('test');
     return { message: 'logout successfully' };
   }
 
@@ -91,7 +92,7 @@ export class UserController {
     @Param('id') selecId: number,
     @Req() req: RequestWithLocals,
   ) {
-    const id = req.locals.user;
+    const id = req.locals.user.id;
     await this.userService.deleteUser(id, selecId);
     return { message: 'Delete successfully' };
   }

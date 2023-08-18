@@ -40,7 +40,7 @@ export class UserService {
 
     const user = await this.userRepository.findOne({
       where: { loginId },
-      select: ['id', 'password'],
+      select: ['id', 'name', 'password'],
     });
 
     if (!user) {
@@ -50,7 +50,7 @@ export class UserService {
       throw new UnauthorizedException(`User password is not correct.`);
     }
 
-    const payload = { id: user.id };
+    const payload = { id: user.id, name: user.name };
     const accessToken = await this.jwtService.signAsync(payload);
     return accessToken;
   }
@@ -69,7 +69,7 @@ export class UserService {
       password,
     });
 
-    const payload = { id: insertResult.identifiers[0].id };
+    const payload = { id: insertResult.identifiers[0].id, name: name };
     const accessToken = await this.jwtService.signAsync(payload);
     return accessToken;
   }
