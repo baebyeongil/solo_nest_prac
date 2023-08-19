@@ -31,13 +31,10 @@ export class UserController {
     return await this.userService.findAllUser();
   }
 
-  @Get('/users/:id')
-  async findOneUser(
-    @Param('id') selecId: number,
-    @Req() req: RequestWithLocals,
-  ) {
+  @Get('/user')
+  async findOneUser(@Req() req: RequestWithLocals) {
     const id = req.locals.user.id;
-    return await this.userService.findOneUser(id, selecId);
+    return await this.userService.findOneUser(id);
   }
 
   @Post('/login')
@@ -45,10 +42,14 @@ export class UserController {
     @Body() data: loginUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = await this.userService.login(data.loginId, data.password);
-    res.cookie('Authentication', 'Bearer ' + token);
+    const { accessToken, user } = await this.userService.login(
+      data.loginId,
+      data.password,
+    );
+    res.cookie('Authentication', 'Bearer ' + accessToken);
     return {
-      message: 'login successfully ' + token,
+      message: 'login successfully ',
+      name: user.name,
     };
   }
 
@@ -57,14 +58,15 @@ export class UserController {
     @Body() data: CreateUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = await this.userService.signup(
+    const { accessToken, name } = await this.userService.signup(
       data.loginId,
       data.name,
       data.password,
     );
-    res.cookie('Authentication', 'Bearer ' + token);
+    res.cookie('Authentication', 'Bearer ' + accessToken);
     return {
       message: 'signup successfully',
+      name: name,
     };
   }
 

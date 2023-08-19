@@ -3,6 +3,9 @@ const socket = new WebSocket('ws://localhost:3000');
 const nickname = prompt('Please enter your nickname:');
 
 socket.onopen = function () {
+  axios.get('/api/user').then(function (response) {
+    console.log(response);
+  });
   socket.send(
     JSON.stringify({
       event: 'mainRoom',

@@ -17,12 +17,10 @@ export class AuthMiddleware implements NestMiddleware {
     if (!authCookie) {
       throw new UnauthorizedException('JWT not found');
     }
-
     let token: string;
     try {
       token = authCookie.split(' ')[1];
       const payload = await this.jwtService.verify(token);
-      console.log(payload);
       req.locals.user = payload;
       next();
     } catch (err) {

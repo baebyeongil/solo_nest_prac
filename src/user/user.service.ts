@@ -22,13 +22,12 @@ export class UserService {
   }
 
   // user 상세 조회
-  async findOneUser(id: number, selecId: number) {
-    await this.isAuth(id, selecId);
-
+  async findOneUser(id: number) {
     return await this.userRepository.findOne({
       where: {
         id,
       },
+      select: ['id', 'name'],
     });
   }
 
@@ -52,7 +51,7 @@ export class UserService {
 
     const payload = { id: user.id, name: user.name };
     const accessToken = await this.jwtService.signAsync(payload);
-    return accessToken;
+    return { accessToken, user };
   }
 
   // 회원가입
@@ -71,7 +70,7 @@ export class UserService {
 
     const payload = { id: insertResult.identifiers[0].id, name: name };
     const accessToken = await this.jwtService.signAsync(payload);
-    return accessToken;
+    return { accessToken, name };
   }
 
   // 유저 정보 수정
